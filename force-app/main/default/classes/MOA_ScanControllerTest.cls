@@ -42,8 +42,12 @@ private class MOA_ScanControllerTest {
         System.assertNotEquals(null, batchId, 'Should return a batch job Id');
 
         // After Test.stopTest(), the batch has completed
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
-        System.assertEquals('Complete', record.Scan_Status__c,
+        List<MOA_Scan_Result__c> records = [
+            SELECT Scan_Status__c FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        System.assert(!records.isEmpty(), 'Scan result record should exist');
+        System.assertEquals('Complete', records[0].Scan_Status__c,
             'Status should be Complete after batch finishes');
     }
 
@@ -51,7 +55,6 @@ private class MOA_ScanControllerTest {
     static void testGetScanStatusRunning() {
         // Manually set status to Running
         MOA_Scan_Result__c record = new MOA_Scan_Result__c(
-            SetupOwnerId = UserInfo.getOrganizationId(),
             Scan_Status__c = 'Running',
             Scan_Date__c = Datetime.now()
         );

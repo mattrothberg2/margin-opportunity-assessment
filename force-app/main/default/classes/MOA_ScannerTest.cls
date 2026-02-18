@@ -159,7 +159,12 @@ private class MOA_ScannerTest {
         Database.executeBatch(scanner, 200);
         Test.stopTest();
 
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
+        List<MOA_Scan_Result__c> records = [
+            SELECT Result_JSON__c, Scan_Status__c FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        System.assert(!records.isEmpty(), 'Scan result record should exist');
+        MOA_Scan_Result__c record = records[0];
         System.assertEquals('Complete', record.Scan_Status__c, 'Scan should complete successfully');
         System.assertNotEquals(null, record.Result_JSON__c, 'Result JSON should be populated');
 
@@ -188,9 +193,13 @@ private class MOA_ScannerTest {
         Database.executeBatch(scanner, 200);
         Test.stopTest();
 
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
+        List<MOA_Scan_Result__c> records = [
+            SELECT Result_JSON__c FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        System.assert(!records.isEmpty(), 'Scan result record should exist');
         MOA_Models.ScanResult result = (MOA_Models.ScanResult) JSON.deserialize(
-            record.Result_JSON__c, MOA_Models.ScanResult.class
+            records[0].Result_JSON__c, MOA_Models.ScanResult.class
         );
 
         for (MOA_Models.Cohort cohort : result.cohorts) {
@@ -333,7 +342,12 @@ private class MOA_ScannerTest {
         Database.executeBatch(scanner, 200);
         Test.stopTest();
 
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
+        List<MOA_Scan_Result__c> records = [
+            SELECT Result_JSON__c, Scan_Status__c FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        System.assert(!records.isEmpty(), 'Scan result record should exist');
+        MOA_Scan_Result__c record = records[0];
         System.assertEquals('Complete', record.Scan_Status__c, 'Should complete even with no deals');
 
         MOA_Models.ScanResult result = (MOA_Models.ScanResult) JSON.deserialize(

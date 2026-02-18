@@ -56,6 +56,8 @@ public with sharing class MOA_Scanner implements Database.Batchable<SObject>, Da
     private List<DealData> allDeals = new List<DealData>();
     private Integer scanMonths;
     private Integer minCohortSize;
+    private Integer processedCount = 0;
+    private Integer totalCount = 0;
 
     public MOA_Scanner(Integer scanMonths, Integer minCohortSize) {
         this.scanMonths = scanMonths != null ? scanMonths : 24;
@@ -65,6 +67,13 @@ public with sharing class MOA_Scanner implements Database.Batchable<SObject>, Da
     // ── Batchable interface ──
 
     public Database.QueryLocator start(Database.BatchableContext bc) {
+        // Get total count for progress reporting
+        String countQuery = 'SELECT COUNT() FROM Opportunity '
+            + 'WHERE IsClosed = true '
+            + 'AND CloseDate >= LAST_N_MONTHS:' + this.scanMonths + ' '
+            + 'AND Amount > 0';
+        this.totalCount = Database.countQuery(countQuery);
+
         String query = 'SELECT Id, Name, Amount, StageName, CloseDate, Type, OwnerId, IsClosed, IsWon, '
             + 'Account.Industry, Account.AnnualRevenue, Account.NumberOfEmployees, Account.Name, '
             + 'Owner.Name, '
@@ -107,6 +116,20 @@ public with sharing class MOA_Scanner implements Database.Batchable<SObject>, Da
                 rep.marginValues.add(deal.marginPercent);
             }
         }
+
+        // Update progress
+        this.processedCount += scope.size();
+        try {
+            List<MOA_Scan_Result__c> records = [
+                SELECT Id, Scan_Status__c FROM MOA_Scan_Result__c ORDER BY CreatedDate DESC LIMIT 1
+            ];
+            if (!records.isEmpty()) {
+                records[0].Scan_Status__c = 'Running: ' + this.processedCount + '/' + this.totalCount;
+                update records[0];
+            }
+        } catch (Exception e) {
+            // Progress update is non-critical — don't fail the batch
+        }
     }
 
     public void finish(Database.BatchableContext bc) {
@@ -114,10 +137,7 @@ public with sharing class MOA_Scanner implements Database.Batchable<SObject>, Da
             MOA_Models.ScanResult result = computeResult();
             String resultJson = JSON.serialize(result);
 
-            MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
-            if (record.Id == null) {
-                record = new MOA_Scan_Result__c(SetupOwnerId = UserInfo.getOrganizationId());
-            }
+            MOA_Scan_Result__c record = getOrCreateResultRecord();
             record.Result_JSON__c = resultJson;
             record.Scan_Status__c = 'Complete';
             record.Error_Message__c = null;
@@ -130,15 +150,24 @@ public with sharing class MOA_Scanner implements Database.Batchable<SObject>, Da
                 update config;
             }
         } catch (Exception e) {
-            MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
-            if (record.Id == null) {
-                record = new MOA_Scan_Result__c(SetupOwnerId = UserInfo.getOrganizationId());
-            }
+            MOA_Scan_Result__c record = getOrCreateResultRecord();
             record.Scan_Status__c = 'Error';
             record.Error_Message__c = e.getMessage() + '\n' + e.getStackTraceString();
             record.Scan_Date__c = Datetime.now();
             upsert record;
         }
+    }
+
+    private static MOA_Scan_Result__c getOrCreateResultRecord() {
+        List<MOA_Scan_Result__c> records = [
+            SELECT Id, Result_JSON__c, Scan_Status__c, Error_Message__c, Scan_Date__c
+            FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        if (!records.isEmpty()) {
+            return records[0];
+        }
+        return new MOA_Scan_Result__c();
     }
 
     // ── Deal extraction ──
@@ -544,7 +573,8 @@ public with sharing class MOA_Scanner implements Database.Batchable<SObject>, Da
             sumSqDiff += diff * diff;
         }
         Decimal variance = sumSqDiff / values.size();
-        return Math.sqrt(variance.doubleValue()).setScale(2, RoundingMode.HALF_UP);
+        Decimal stdDev = Decimal.valueOf(Math.sqrt(variance.doubleValue()));
+        return stdDev.setScale(2, RoundingMode.HALF_UP);
     }
 
     private static String marginToBand(Decimal margin) {

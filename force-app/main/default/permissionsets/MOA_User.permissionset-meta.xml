@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Read-only access to Opportunity, Account, OpportunityLineItem, Product2, and User data for MOA scanning. Read/write to MOA custom settings.</description>
+    <description>Read-only access to Opportunity, Account, OpportunityLineItem, Product2 for MOA scanning. Read/write to MOA custom objects and settings.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>MOA User</label>
     <objectPermissions>
@@ -39,11 +39,15 @@
         <object>Product2</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Opportunity.Name</field>
-        <readable>true</readable>
-    </fieldPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>MOA_Scan_Result__c</object>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
     <fieldPermissions>
         <editable>false</editable>
         <field>Opportunity.Amount</field>
@@ -51,22 +55,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Opportunity.StageName</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Opportunity.CloseDate</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Opportunity.Probability</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Opportunity.OwnerId</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
@@ -86,16 +75,6 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>false</editable>
-        <field>Account.Name</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>Product2.Name</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
         <field>Product2.Family</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -104,12 +83,28 @@
         <field>Product2.ProductCode</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>MOA_Scan_Result__c.Result_JSON__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>MOA_Scan_Result__c.Scan_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>MOA_Scan_Result__c.Error_Message__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>MOA_Scan_Result__c.Scan_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <customSettingAccesses>
         <enabled>true</enabled>
         <name>MOA_Config__c</name>
-    </customSettingAccesses>
-    <customSettingAccesses>
-        <enabled>true</enabled>
-        <name>MOA_Scan_Result__c</name>
     </customSettingAccesses>
 </PermissionSet>
