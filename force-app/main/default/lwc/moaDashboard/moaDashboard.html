@@ -1,0 +1,34 @@
+<template>
+    <lightning-card title="Margin Opportunity Assessment" icon-name="standard:analytics">
+        <!-- Placeholder — full UI built in 13C -->
+        <div class="slds-p-around_medium">
+            <p class="slds-text-body_regular">
+                Scan your historical deals to discover how much margin your team is leaving on the table.
+            </p>
+            <div class="slds-m-top_medium">
+                <lightning-button
+                    label="Run Scan"
+                    variant="brand"
+                    onclick={handleRunScan}
+                    disabled={isScanning}
+                ></lightning-button>
+            </div>
+            <template if:true={isScanning}>
+                <div class="slds-m-top_medium">
+                    <lightning-spinner alternative-text="Scanning..." size="small"></lightning-spinner>
+                    <p class="slds-m-top_small slds-text-body_small">Analyzing your deals...</p>
+                </div>
+            </template>
+            <template if:true={hasResult}>
+                <div class="slds-m-top_large">
+                    <p class="slds-text-heading_small">Scan complete. Full dashboard coming soon.</p>
+                </div>
+            </template>
+            <template if:true={error}>
+                <div class="slds-m-top_medium">
+                    <p class="slds-text-color_error">{error}</p>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

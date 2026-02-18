@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Margin Opportunity Assessment dashboard — scan and analyze deal margins.</description>
+    <label>Margin Opportunity Assessment</label>
+    <lwcComponent>moaDashboard</lwcComponent>
+    <motif>Custom100: Analytics</motif>
+</CustomTab>
