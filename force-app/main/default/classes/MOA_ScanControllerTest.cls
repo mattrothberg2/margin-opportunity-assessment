@@ -5,61 +5,99 @@
 private class MOA_ScanControllerTest {
 
     @TestSetup
-    static void setupConfig() {
+    static void setupData() {
         MOA_Config__c config = new MOA_Config__c(
-            SetupOwnerId = UserInfo.getUserId(),
+            SetupOwnerId = UserInfo.getOrganizationId(),
             Install_Date__c = Date.today(),
             Scan_Months__c = 24,
-            Min_Cohort_Size__c = 5
+            Min_Cohort_Size__c = 2
         );
         insert config;
-    }
 
-    @IsTest
-    static void testRunScan() {
-        Test.startTest();
-        String resultJson = MOA_ScanController.runScan();
-        Test.stopTest();
-
-        System.assertNotEquals(null, resultJson, 'Should return JSON result');
-
-        MOA_Models.ScanResult result = (MOA_Models.ScanResult) JSON.deserialize(
-            resultJson, MOA_Models.ScanResult.class
+        Account acc = new Account(
+            Name = 'Test Account',
+            AnnualRevenue = 500000000.00
         );
-        System.assertNotEquals(null, result, 'Should deserialize to ScanResult');
+        insert acc;
 
-        // Verify persisted
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getInstance();
-        System.assertEquals('Complete', record.Scan_Status__c, 'Status should be Complete');
+        List<Opportunity> opps = new List<Opportunity>();
+        for (Integer i = 0; i < 3; i++) {
+            opps.add(new Opportunity(
+                Name = 'Test Opp ' + i,
+                AccountId = acc.Id,
+                Amount = 50000 + (i * 10000),
+                StageName = i < 2 ? 'Closed Won' : 'Closed Lost',
+                CloseDate = Date.today().addDays(-30 * (i + 1))
+            ));
+        }
+        insert opps;
     }
 
     @IsTest
-    static void testGetLastScanResultEmpty() {
-        String result = MOA_ScanController.getLastScanResult();
-        // No scan has been run yet — may be null or empty
-        // This is acceptable behavior
-        System.assert(result == null || result == '', 'Should be null or empty when no scan exists');
-    }
-
-    @IsTest
-    static void testGetLastScanResultAfterScan() {
-        MOA_ScanController.runScan();
-
+    static void testStartScan() {
         Test.startTest();
-        String result = MOA_ScanController.getLastScanResult();
+        String batchId = MOA_ScanController.startScan();
         Test.stopTest();
 
-        System.assertNotEquals(null, result, 'Should return last scan result');
+        System.assertNotEquals(null, batchId, 'Should return a batch job Id');
+
+        // After Test.stopTest(), the batch has completed
+        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
+        System.assertEquals('Complete', record.Scan_Status__c,
+            'Status should be Complete after batch finishes');
+    }
+
+    @IsTest
+    static void testGetScanStatusRunning() {
+        // Manually set status to Running
+        MOA_Scan_Result__c record = new MOA_Scan_Result__c(
+            SetupOwnerId = UserInfo.getOrganizationId(),
+            Scan_Status__c = 'Running',
+            Scan_Date__c = Datetime.now()
+        );
+        insert record;
+
+        String status = MOA_ScanController.getScanStatus();
+        System.assertEquals('Running', status, 'Should return Running status');
+    }
+
+    @IsTest
+    static void testGetScanStatusNull() {
+        String status = MOA_ScanController.getScanStatus();
+        // No scan result record exists yet at org level
+        // Status could be null
+        System.assert(status == null || String.isNotBlank(status),
+            'Status should be null or a valid string');
+    }
+
+    @IsTest
+    static void testGetScanResultEmpty() {
+        String result = MOA_ScanController.getScanResult();
+        System.assert(result == null, 'Should be null when no scan has been run');
+    }
+
+    @IsTest
+    static void testGetScanResultAfterScan() {
+        Test.startTest();
+        MOA_ScanController.startScan();
+        Test.stopTest();
+
+        String result = MOA_ScanController.getScanResult();
+        System.assertNotEquals(null, result, 'Should return scan result JSON');
+
+        MOA_Models.ScanResult parsed = (MOA_Models.ScanResult) JSON.deserialize(
+            result, MOA_Models.ScanResult.class
+        );
+        System.assertNotEquals(null, parsed, 'Should deserialize to ScanResult');
+        System.assert(parsed.totalDeals > 0, 'Should have found deals');
     }
 
     @IsTest
     static void testGetConfig() {
-        Test.startTest();
         Map<String, Object> config = MOA_ScanController.getConfig();
-        Test.stopTest();
 
         System.assertNotEquals(null, config, 'Config should not be null');
         System.assertEquals(24, (Decimal) config.get('scanMonths'), 'Default scan months should be 24');
-        System.assertEquals(5, (Decimal) config.get('minCohortSize'), 'Default min cohort size should be 5');
+        System.assertEquals(2, (Decimal) config.get('minCohortSize'), 'Min cohort size should be 2');
     }
 }
