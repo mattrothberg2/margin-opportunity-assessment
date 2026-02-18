@@ -1,0 +1,248 @@
+<apex:page controller="MOA_ReportController" renderAs="pdf" applyBodyTag="false" applyHtmlTag="false" showHeader="false" sidebar="false">
+<html>
+<head>
+<style type="text/css">
+    @page {
+        size: letter;
+        margin: 0.75in;
+        @bottom-center {
+            content: "Margin Opportunity Assessment | marginarc.com";
+            font-size: 9px;
+            color: #94A3B8;
+        }
+        @bottom-right {
+            content: "Page " counter(page) " of " counter(pages);
+            font-size: 9px;
+            color: #94A3B8;
+        }
+    }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        color: #334155;
+        line-height: 1.5;
+    }
+    h1 {
+        font-size: 22px;
+        color: #0F172A;
+        margin: 0 0 4px;
+    }
+    h2 {
+        font-size: 16px;
+        color: #0F172A;
+        margin: 20px 0 10px;
+        padding-bottom: 4px;
+        border-bottom: 2px solid #E2E8F0;
+    }
+    .subtitle {
+        font-size: 11px;
+        color: #64748B;
+        margin: 0 0 20px;
+    }
+    .kpi-strip {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 16px;
+    }
+    .kpi-strip td {
+        text-align: center;
+        padding: 12px 8px;
+        border: 1px solid #E2E8F0;
+        background: #F8FAFC;
+    }
+    .kpi-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #0F172A;
+        display: block;
+    }
+    .kpi-value-hero {
+        font-size: 24px;
+        font-weight: bold;
+        color: #059669;
+        display: block;
+    }
+    .kpi-label {
+        font-size: 9px;
+        color: #64748B;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .headline {
+        text-align: center;
+        font-size: 13px;
+        color: #334155;
+        margin: 10px 0 24px;
+    }
+    .highlight {
+        color: #059669;
+        font-weight: bold;
+    }
+    table.data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10px;
+        margin-bottom: 12px;
+    }
+    table.data-table th {
+        background: #F8FAFC;
+        padding: 6px 8px;
+        text-align: left;
+        font-weight: 600;
+        color: #475569;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        border-bottom: 2px solid #E2E8F0;
+    }
+    table.data-table th.right {
+        text-align: right;
+    }
+    table.data-table td {
+        padding: 5px 8px;
+        border-bottom: 1px solid #F1F5F9;
+        color: #334155;
+    }
+    table.data-table td.right {
+        text-align: right;
+    }
+    table.data-table tr.alt {
+        background: #F8FAFC;
+    }
+    .text-green { color: #059669; font-weight: 600; }
+    .text-red { color: #DC2626; font-weight: 600; }
+    .bold { font-weight: 600; }
+    .page-break { page-break-before: always; }
+    .footer-cta {
+        margin-top: 30px;
+        padding: 12px;
+        background: #F0FDF4;
+        border: 1px solid #BBF7D0;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 11px;
+        color: #166534;
+    }
+</style>
+</head>
+<body>
+
+<!-- Page 1: Executive Summary -->
+<h1>Margin Opportunity Assessment</h1>
+<p class="subtitle">
+    Generated {!scanDateFormatted} | {!result.totalDeals} deals analyzed over {!result.scanMonths} months
+</p>
+
+<table class="kpi-strip">
+    <tr>
+        <td>
+            <span class="kpi-value">{!formattedTotalDeals}</span>
+            <span class="kpi-label">Deals Analyzed</span>
+        </td>
+        <td>
+            <span class="kpi-value">{!formattedTotalRevenue}</span>
+            <span class="kpi-label">Total Revenue</span>
+        </td>
+        <td>
+            <span class="kpi-value">{!formattedCurrentMargin}</span>
+            <span class="kpi-label">Current Avg Margin</span>
+        </td>
+        <td>
+            <span class="kpi-value" style="color:#2563EB">{!formattedAchievableMargin}</span>
+            <span class="kpi-label">Achievable Avg Margin</span>
+        </td>
+        <td>
+            <span class="kpi-value-hero">{!formattedAnnualOpportunity}</span>
+            <span class="kpi-label">Annual Opportunity</span>
+        </td>
+    </tr>
+</table>
+
+<p class="headline">
+    Your team is leaving an estimated <span class="highlight">{!formattedAnnualOpportunity}</span>/year on the table.
+</p>
+
+<h2>Summary</h2>
+<table class="data-table">
+    <tr>
+        <td><strong>Won Deals:</strong> {!result.totalWon}</td>
+        <td><strong>Lost Deals:</strong> {!result.totalLost}</td>
+        <td><strong>Win Rate:</strong> {!formattedWinRate}</td>
+    </tr>
+    <tr>
+        <td><strong>Segments:</strong> {!cohortCount}</td>
+        <td><strong>Sales Reps:</strong> {!repCount}</td>
+        <td><strong>Scan Period:</strong> {!result.scanMonths} months</td>
+    </tr>
+</table>
+
+<div class="footer-cta">
+    Want to close this gap with AI-powered deal recommendations? Visit <strong>marginarc.com</strong>
+</div>
+
+<!-- Page 2: Top 10 Segments -->
+<div class="page-break"></div>
+<h1>Segment Breakdown</h1>
+<p class="subtitle">Top 10 segments by margin opportunity</p>
+
+<table class="data-table">
+    <tr>
+        <th>Segment</th>
+        <th class="right">Deals</th>
+        <th class="right">Win Rate</th>
+        <th class="right">Median Margin</th>
+        <th class="right">Avg Margin</th>
+        <th class="right">Gap</th>
+        <th class="right">Opportunity</th>
+    </tr>
+    <apex:repeat value="{!topCohorts}" var="c">
+        <tr class="{!c.rowClass}">
+            <td>{!c.segmentLabel}</td>
+            <td class="right">{!c.dealCount}</td>
+            <td class="right">{!c.winRateFormatted}</td>
+            <td class="right">{!c.medianFormatted}</td>
+            <td class="right">{!c.avgFormatted}</td>
+            <td class="right {!c.gapColorClass}">{!c.gapFormatted}</td>
+            <td class="right bold">{!c.oppFormatted}</td>
+        </tr>
+    </apex:repeat>
+</table>
+
+<!-- Page 3: Rep Leaderboard -->
+<div class="page-break"></div>
+<h1>Rep Leaderboard</h1>
+<p class="subtitle">Sorted by margin opportunity</p>
+
+<table class="data-table">
+    <tr>
+        <th>Rep</th>
+        <th class="right">Deals</th>
+        <th class="right">Won</th>
+        <th class="right">Win Rate</th>
+        <th class="right">Avg Margin</th>
+        <th class="right">vs Team</th>
+        <th class="right">Consistency</th>
+        <th class="right">Opportunity</th>
+    </tr>
+    <apex:repeat value="{!sortedReps}" var="r">
+        <tr class="{!r.rowClass}">
+            <td>{!r.repName}</td>
+            <td class="right">{!r.dealCount}</td>
+            <td class="right">{!r.wonCount}</td>
+            <td class="right">{!r.winRateFormatted}</td>
+            <td class="right">{!r.avgMarginFormatted}</td>
+            <td class="right {!r.vsTeamColorClass}">{!r.vsTeamFormatted}</td>
+            <td class="right">{!r.consistencyFormatted}</td>
+            <td class="right bold">{!r.oppFormatted}</td>
+        </tr>
+    </apex:repeat>
+</table>
+
+<div class="footer-cta">
+    <strong>Margin Opportunity Assessment</strong> by MarginArc — AI-powered margin optimization for IT VARs.<br/>
+    Learn more at <strong>marginarc.com</strong>
+</div>
+
+</body>
+</html>
+</apex:page>

@@ -18,11 +18,8 @@ public with sharing class MOA_ScanController {
             ? Integer.valueOf(config.Min_Cohort_Size__c)
             : 5;
 
-        // Mark as running
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
-        if (record.Id == null) {
-            record = new MOA_Scan_Result__c(SetupOwnerId = UserInfo.getOrganizationId());
-        }
+        // Mark as running — use singleton record pattern
+        MOA_Scan_Result__c record = getOrCreateResultRecord();
         record.Scan_Status__c = 'Running';
         record.Error_Message__c = null;
         record.Scan_Date__c = Datetime.now();
@@ -39,24 +36,30 @@ public with sharing class MOA_ScanController {
      */
     @AuraEnabled(cacheable=true)
     public static String getScanResult() {
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
-        if (record == null || record.Id == null || String.isBlank(record.Result_JSON__c)) {
+        List<MOA_Scan_Result__c> records = [
+            SELECT Result_JSON__c FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        if (records.isEmpty() || String.isBlank(records[0].Result_JSON__c)) {
             return null;
         }
-        return record.Result_JSON__c;
+        return records[0].Result_JSON__c;
     }
 
     /**
      * Get the current scan status.
-     * @return Status string: Running, Complete, Error, or null
+     * @return Status string: Running, Running: X/Y, Complete, Error, or null
      */
     @AuraEnabled
     public static String getScanStatus() {
-        MOA_Scan_Result__c record = MOA_Scan_Result__c.getOrgDefaults();
-        if (record == null || record.Id == null) {
+        List<MOA_Scan_Result__c> records = [
+            SELECT Scan_Status__c FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        if (records.isEmpty()) {
             return null;
         }
-        return record.Scan_Status__c;
+        return records[0].Scan_Status__c;
     }
 
     /**
@@ -72,5 +75,17 @@ public with sharing class MOA_ScanController {
         configMap.put('lastScanDate', config != null ? config.Last_Scan_Date__c : null);
         configMap.put('installDate', config != null ? config.Install_Date__c : null);
         return configMap;
+    }
+
+    private static MOA_Scan_Result__c getOrCreateResultRecord() {
+        List<MOA_Scan_Result__c> records = [
+            SELECT Id, Result_JSON__c, Scan_Status__c, Error_Message__c, Scan_Date__c
+            FROM MOA_Scan_Result__c
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        if (!records.isEmpty()) {
+            return records[0];
+        }
+        return new MOA_Scan_Result__c();
     }
 }

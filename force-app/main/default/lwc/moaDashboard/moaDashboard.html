@@ -24,6 +24,12 @@
             <div class="moa-header-right">
                 <template if:true={hasResult}>
                     <lightning-button
+                        label="Export PDF"
+                        variant="neutral"
+                        onclick={handleExportPdf}
+                        class="slds-m-right_small"
+                    ></lightning-button>
+                    <lightning-button
                         label="Export CSV"
                         variant="neutral"
                         onclick={handleExportCsv}
@@ -43,7 +49,10 @@
         <template if:true={error}>
             <div class="moa-card moa-error-card">
                 <lightning-icon icon-name="utility:error" variant="error" size="small"></lightning-icon>
-                <span class="slds-m-left_small">{error}</span>
+                <div class="moa-error-content">
+                    <p class="moa-error-message">Scan encountered an issue: {error}</p>
+                    <p class="moa-error-help">Contact <a href="mailto:support@marginarc.com">support@marginarc.com</a> for help.</p>
+                </div>
             </div>
         </template>
 
@@ -52,6 +61,14 @@
             <div class="moa-card moa-scanning-card">
                 <lightning-spinner alternative-text="Scanning..." size="medium"></lightning-spinner>
                 <p class="moa-scanning-text">Analyzing your deals... This may take a minute.</p>
+                <template if:true={hasProgress}>
+                    <div class="moa-progress-wrap">
+                        <div class="moa-progress-bar">
+                            <div class="moa-progress-fill" style={progressBarStyle}></div>
+                        </div>
+                        <p class="moa-progress-label">{progressLabel}</p>
+                    </div>
+                </template>
             </div>
         </template>
 

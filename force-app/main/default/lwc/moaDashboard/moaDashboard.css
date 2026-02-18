@@ -80,10 +80,31 @@
 
 .moa-error-card {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     background: #FEF2F2;
     border: 1px solid #FCA5A5;
     color: #991B1B;
+    gap: 0.75rem;
+}
+
+.moa-error-content {
+    flex: 1;
+}
+
+.moa-error-message {
+    margin: 0;
+    font-weight: 500;
+}
+
+.moa-error-help {
+    margin: 0.25rem 0 0;
+    font-size: 0.8125rem;
+    color: #B91C1C;
+}
+
+.moa-error-help a {
+    color: #991B1B;
+    text-decoration: underline;
 }
 
 .moa-scanning-card {
@@ -98,6 +119,35 @@
     margin-top: 1.5rem;
     font-size: 1rem;
     color: #64748B;
+}
+
+/* ── Progress Bar ── */
+
+.moa-progress-wrap {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 1.25rem;
+}
+
+.moa-progress-bar {
+    height: 8px;
+    background: #E2E8F0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.moa-progress-fill {
+    height: 100%;
+    background: #3B82F6;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.moa-progress-label {
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    color: #64748B;
+    text-align: center;
 }
 
 /* ── Welcome ── */

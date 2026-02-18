@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
-    <customSettingsType>Hierarchy</customSettingsType>
-    <description>Stores the latest scan result for each user/profile/org level.</description>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Stores the latest MOA scan result. Uses a singleton record pattern (one record per org).</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
     <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>false</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
     <label>MOA Scan Result</label>
-    <visibility>Public</visibility>
+    <nameField>
+        <displayFormat>MOA-{0000}</displayFormat>
+        <label>Scan Result Name</label>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>MOA Scan Results</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
 </CustomObject>

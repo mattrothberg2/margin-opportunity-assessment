@@ -57,7 +57,16 @@ MOA uses a Hierarchy Custom Setting (`MOA_Config__c`) with these defaults:
 
 ## Screenshots
 
-*Coming soon*
+### KPI Summary
+![MOA Dashboard — KPI Summary](docs/moa-summary.png)
+
+### Segment Breakdown
+![MOA Dashboard — Segment Breakdown](docs/moa-segments.png)
+
+### Rep Leaderboard
+![MOA Dashboard — Rep Leaderboard](docs/moa-reps.png)
+
+> Screenshots shown from a demo org. Your results will vary based on your deal history.
 
 ## License
 

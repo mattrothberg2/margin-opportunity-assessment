@@ -16,6 +16,8 @@ export default class MoaDashboard extends LightningElement {
     @track showAllCohorts = false;
     @track cohortSortField = 'marginOpportunity';
     @track cohortSortAsc = false;
+    @track progressProcessed = 0;
+    @track progressTotal = 0;
 
     _pollTimer = null;
 
@@ -99,15 +101,45 @@ export default class MoaDashboard extends LightningElement {
             if (status === 'Complete') {
                 this.clearPoll();
                 this.isScanning = false;
+                this.progressProcessed = 0;
+                this.progressTotal = 0;
                 await this.loadResult();
             } else if (status === 'Error') {
                 this.clearPoll();
                 this.isScanning = false;
+                this.progressProcessed = 0;
+                this.progressTotal = 0;
                 this.error = 'Scan failed. Please try again.';
+            } else if (status && status.startsWith('Running: ')) {
+                // Parse progress: "Running: 450/2847"
+                const parts = status.replace('Running: ', '').split('/');
+                if (parts.length === 2) {
+                    this.progressProcessed = parseInt(parts[0], 10) || 0;
+                    this.progressTotal = parseInt(parts[1], 10) || 0;
+                }
             }
         } catch (e) {
             // Keep polling
         }
+    }
+
+    // ── Computed: Progress ──
+
+    get hasProgress() {
+        return this.progressTotal > 0;
+    }
+
+    get progressPercent() {
+        if (this.progressTotal <= 0) return 0;
+        return Math.min(100, Math.round((this.progressProcessed / this.progressTotal) * 100));
+    }
+
+    get progressBarStyle() {
+        return 'width: ' + this.progressPercent + '%';
+    }
+
+    get progressLabel() {
+        return this.progressProcessed + ' / ' + this.progressTotal + ' deals (' + this.progressPercent + '%)';
     }
 
     // ── Computed: State ──
@@ -343,6 +375,13 @@ export default class MoaDashboard extends LightningElement {
         const b = this.sweetSpotBand;
         if (!b) return null;
         return b.band + ' margin band (' + this.formatPercent(b.winRate) + ' win rate)';
+    }
+
+    // ── PDF Export ──
+
+    handleExportPdf() {
+        // Open the VF page in a new tab — it renders as PDF
+        window.open('/apex/MOA_ReportPDF', '_blank');
     }
 
     // ── CSV Export ──
