@@ -1,4 +1,404 @@
-/* Placeholder — full styles built in 13C */
+/* MOA Dashboard Styles */
 :host {
     display: block;
+}
+
+.moa-wrapper {
+    background: #F1F5F9;
+    padding: 1.5rem;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ── Trial Banner ── */
+
+.moa-trial-banner {
+    background: #FEF3C7;
+    border: 1px solid #F59E0B;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.moa-trial-text {
+    font-size: 0.875rem;
+    color: #92400E;
+}
+
+.moa-trial-text a {
+    color: #D97706;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.moa-trial-text a:hover {
+    text-decoration: underline;
+}
+
+/* ── Header ── */
+
+.moa-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.moa-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.moa-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0;
+}
+
+.moa-subtitle {
+    font-size: 0.8125rem;
+    color: #64748B;
+    margin: 0.25rem 0 0;
+}
+
+/* ── Cards ── */
+
+.moa-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.moa-error-card {
+    display: flex;
+    align-items: center;
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    color: #991B1B;
+}
+
+.moa-scanning-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+}
+
+.moa-scanning-text {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #64748B;
+}
+
+/* ── Welcome ── */
+
+.moa-welcome-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 4rem 2rem;
+}
+
+.moa-welcome-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 1.5rem 0 0.75rem;
+}
+
+.moa-welcome-desc {
+    font-size: 1rem;
+    color: #64748B;
+    max-width: 560px;
+    line-height: 1.6;
+}
+
+/* ── KPI Strip ── */
+
+.moa-kpi-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.moa-kpi {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.moa-kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+.moa-kpi-achievable {
+    color: #2563EB;
+}
+
+.moa-kpi-label {
+    font-size: 0.75rem;
+    color: #64748B;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.moa-kpi-hero {
+    border-left: 2px solid #E2E8F0;
+    padding-left: 1.5rem;
+}
+
+.moa-kpi-hero-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #059669;
+}
+
+.moa-headline {
+    text-align: center;
+    font-size: 1.0625rem;
+    color: #334155;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+}
+
+.moa-highlight {
+    color: #059669;
+    font-weight: 700;
+}
+
+/* ── Section Headers ── */
+
+.moa-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.moa-section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0 0 1rem;
+}
+
+.moa-section-header .moa-section-title {
+    margin-bottom: 0;
+}
+
+/* ── Tables ── */
+
+.moa-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.moa-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.moa-th {
+    position: sticky;
+    top: 0;
+    background: #F8FAFC;
+    padding: 0.625rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #E2E8F0;
+    white-space: nowrap;
+    user-select: none;
+}
+
+.moa-th-sortable {
+    cursor: pointer;
+}
+
+.moa-th-sortable:hover {
+    color: #0F172A;
+    background: #F1F5F9;
+}
+
+.moa-th-right {
+    text-align: right;
+}
+
+.moa-td {
+    padding: 0.5rem 0.75rem;
+    color: #334155;
+    border-bottom: 1px solid #F1F5F9;
+    white-space: nowrap;
+}
+
+.moa-td-right {
+    text-align: right;
+}
+
+.moa-td-bold {
+    font-weight: 600;
+}
+
+.moa-row-even {
+    background: #FFFFFF;
+}
+
+.moa-row-odd {
+    background: #F8FAFC;
+}
+
+.moa-text-green {
+    color: #059669;
+    font-weight: 600;
+}
+
+.moa-text-red {
+    color: #DC2626;
+    font-weight: 600;
+}
+
+/* ── Bar Chart ── */
+
+.moa-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.moa-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.moa-bar-label {
+    width: 60px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #475569;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.moa-bar-track {
+    flex: 1;
+    height: 32px;
+    background: #F1F5F9;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.moa-bar-fill {
+    height: 100%;
+    background: #3B82F6;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.5rem;
+    transition: width 0.4s ease;
+    min-width: 40px;
+}
+
+.moa-bar-sweet {
+    background: #059669;
+}
+
+.moa-bar-value {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.moa-bar-count {
+    width: 65px;
+    font-size: 0.75rem;
+    color: #94A3B8;
+    flex-shrink: 0;
+}
+
+.moa-sweet-spot {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: #059669;
+    padding: 0.5rem 0.75rem;
+    background: #ECFDF5;
+    border-radius: 6px;
+}
+
+/* ── Footer ── */
+
+.moa-footer {
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+    font-size: 0.8125rem;
+    color: #94A3B8;
+}
+
+.moa-footer a {
+    color: #3B82F6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.moa-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 768px) {
+    .moa-kpi-strip {
+        flex-direction: column;
+    }
+
+    .moa-kpi {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        min-width: auto;
+    }
+
+    .moa-kpi-hero {
+        border-left: none;
+        border-top: 2px solid #E2E8F0;
+        padding-left: 0;
+        padding-top: 0.75rem;
+    }
+
+    .moa-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .moa-kpi-value {
+        font-size: 1.25rem;
+    }
+
+    .moa-kpi-hero-value {
+        font-size: 1.5rem;
+    }
 }
